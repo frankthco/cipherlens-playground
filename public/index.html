@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CipherLens — Quantum Readiness Assessment</title>
+  <meta name="description" content="Post-Quantum Cryptography scan proof-of-concept demonstrating classical algorithm vulnerabilities and NIST PQC migration readiness.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Animated background particles -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="glow glow-1" aria-hidden="true"></div>
+  <div class="glow glow-2" aria-hidden="true"></div>
+  <div class="glow glow-3" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🔐</span>
+        <span class="logo-text">Cipher<span class="logo-accent">Lens</span></span>
+      </div>
+      <nav class="nav">
+        <a href="#dashboard" class="nav-link active">Dashboard</a>
+        <a href="#endpoints" class="nav-link">API Playground</a>
+        <a href="#cbom" class="nav-link">CBOM Report</a>
+        <a href="#roadmap" class="nav-link">Migration</a>
+      </nav>
+      <div class="header-badge">
+        <span class="pulse-dot"></span>
+        <span>Live Demo</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="dashboard">
+      <div class="hero-content">
+        <div class="hero-badge">Post-Quantum Cryptography Assessment</div>
+        <h1>Quantum Readiness<br><span class="gradient-text">Threat Scanner</span></h1>
+        <p class="hero-subtitle">
+          This proof-of-concept application uses classical cryptographic algorithms across
+          authentication, encryption, key exchange, and digital signatures — enabling CipherLens
+          to produce a <strong>Cryptographic Bill of Materials (CBOM)</strong> and flag
+          quantum-vulnerable components.
+        </p>
+        <div class="hero-actions">
+          <a href="#endpoints" class="btn btn-primary">
+            <span>Try the API</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#cbom" class="btn btn-ghost">View CBOM Report</a>
+        </div>
+      </div>
+
+      <!-- Risk summary cards -->
+      <div class="risk-cards">
+        <div class="risk-card risk-critical">
+          <div class="risk-card-value">5</div>
+          <div class="risk-card-label">Critical</div>
+          <div class="risk-card-sub">Shor's Algorithm</div>
+        </div>
+        <div class="risk-card risk-medium">
+          <div class="risk-card-value">1</div>
+          <div class="risk-card-label">Medium</div>
+          <div class="risk-card-sub">Grover's Impact</div>
+        </div>
+        <div class="risk-card risk-safe">
+          <div class="risk-card-value">2</div>
+          <div class="risk-card-label">Safe / Low</div>
+          <div class="risk-card-sub">Quantum Resistant</div>
+        </div>
+        <div class="risk-card risk-overall">
+          <div class="risk-card-value">62.5%</div>
+          <div class="risk-card-label">At Risk</div>
+          <div class="risk-card-sub">Needs Migration</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API Playground -->
+    <section class="section" id="endpoints">
+      <div class="section-header">
+        <h2>API <span class="gradient-text">Playground</span></h2>
+        <p>Interact with the cryptographic endpoints live. Each response includes PQC risk annotations.</p>
+      </div>
+
+      <div class="endpoints-grid">
+        <!-- Login -->
+        <div class="endpoint-card" id="ep-login">
+          <div class="endpoint-header">
+            <span class="method-badge post">POST</span>
+            <code>/api/login</code>
+          </div>
+          <p class="endpoint-desc">Password authentication (bcrypt) + JWT issuance (RS256 / RSA-2048)</p>
+          <div class="endpoint-tags">
+            <span class="tag tag-safe">bcrypt — SAFE</span>
+            <span class="tag tag-critical">RS256 — CRITICAL</span>
+          </div>
+          <div class="endpoint-form">
+            <div class="input-row">
+              <input type="text" id="login-user" placeholder="Username" value="alice">
+              <input type="password" id="login-pass" placeholder="Password" value="s3cret!">
+              <button class="btn btn-primary btn-sm" onclick="callLogin()">
+                <span class="btn-loader" id="login-loader"></span>
+                Execute
+              </button>
+            </div>
+          </div>
+          <pre class="endpoint-result" id="login-result"><span class="placeholder">Response will appear here…</span></pre>
+        </div>
+
+        <!-- Encrypt -->
+        <div class="endpoint-card" id="ep-encrypt">
+          <div class="endpoint-header">
+            <span class="method-badge post">POST</span>
+            <code>/api/encrypt</code>
+          </div>
+          <p class="endpoint-desc">ECDH key exchange (P-256) + AES-256-GCM symmetric encryption</p>
+          <div class="endpoint-tags">
+            <span class="tag tag-safe">AES-256 — SAFE</span>
+            <span class="tag tag-critical">ECDH — CRITICAL</span>
+          </div>
+          <div class="endpoint-form">
+            <input type="text" id="encrypt-plaintext" placeholder="Plaintext to encrypt" value="Top secret quantum data">
+            <button class="btn btn-primary btn-sm" onclick="callEncrypt()">
+              <span class="btn-loader" id="encrypt-loader"></span>
+              Execute
+            </button>
+          </div>
+          <pre class="endpoint-result" id="encrypt-result"><span class="placeholder">Response will appear here…</span></pre>
+        </div>
+
+        <!-- Sign -->
+        <div class="endpoint-card" id="ep-sign">
+          <div class="endpoint-header">
+            <span class="method-badge post">POST</span>
+            <code>/api/sign</code>
+          </div>
+          <p class="endpoint-desc">ECDSA (secp256k1) digital signature + SHA-256 hash + RSA-2048 key generation</p>
+          <div class="endpoint-tags">
+            <span class="tag tag-critical">ECDSA — CRITICAL</span>
+            <span class="tag tag-medium">SHA-256 — MEDIUM</span>
+            <span class="tag tag-critical">RSA — CRITICAL</span>
+          </div>
+          <div class="endpoint-form">
+            <input type="text" id="sign-message" placeholder="Message to sign" value="Sign this document">
+            <button class="btn btn-primary btn-sm" onclick="callSign()">
+              <span class="btn-loader" id="sign-loader"></span>
+              Execute
+            </button>
+          </div>
+          <pre class="endpoint-result" id="sign-result"><span class="placeholder">Response will appear here…</span></pre>
+        </div>
+
+        <!-- Okta -->
+        <div class="endpoint-card" id="ep-okta">
+          <div class="endpoint-header">
+            <span class="method-badge post">POST</span>
+            <code>/api/verify-okta</code>
+          </div>
+          <p class="endpoint-desc">Okta SSO token verification via JWKS endpoint (RS256 / ES256)</p>
+          <div class="endpoint-tags">
+            <span class="tag tag-critical">RS256/ES256 — CRITICAL</span>
+          </div>
+          <div class="endpoint-form">
+            <input type="text" id="okta-token" placeholder="Okta access token" value="eyJhbGciOiJSUzI1NiJ9...">
+            <button class="btn btn-primary btn-sm" onclick="callOkta()">
+              <span class="btn-loader" id="okta-loader"></span>
+              Execute
+            </button>
+          </div>
+          <pre class="endpoint-result" id="okta-result"><span class="placeholder">Response will appear here…</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CBOM Report -->
+    <section class="section" id="cbom">
+      <div class="section-header">
+        <h2>Cryptographic <span class="gradient-text">Bill of Materials</span></h2>
+        <p>Static analysis mapping of every cryptographic function to its quantum risk level.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="cbom-table">
+          <thead>
+            <tr>
+              <th>Target File</th>
+              <th>Crypto Function</th>
+              <th>Algorithm / Parameters</th>
+              <th>Quantum Threat</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>src/auth.js</code></td>
+              <td>Password Hash</td>
+              <td>bcrypt (10 rounds)</td>
+              <td>Resistant to Shor's</td>
+              <td><span class="risk-pill safe">LOW</span></td>
+            </tr>
+            <tr>
+              <td><code>src/auth.js</code></td>
+              <td>JWT Signing</td>
+              <td>RS256 (RSA-2048)</td>
+              <td>Shor's — integer factoring</td>
+              <td><span class="risk-pill critical">CRITICAL</span></td>
+            </tr>
+            <tr>
+              <td><code>src/okta.js</code></td>
+              <td>SSO Verification</td>
+              <td>RS256 / ES256 (JWKS)</td>
+              <td>Shor's — IdP public key</td>
+              <td><span class="risk-pill critical">CRITICAL</span></td>
+            </tr>
+            <tr>
+              <td><code>src/crypto.js</code></td>
+              <td>Data Encryption</td>
+              <td>AES-256-GCM</td>
+              <td>Grover's → 128-bit effective</td>
+              <td><span class="risk-pill safe">SAFE</span></td>
+            </tr>
+            <tr>
+              <td><code>src/crypto.js</code></td>
+              <td>Key Exchange</td>
+              <td>ECDH (P-256)</td>
+              <td>Shor's + SNDL attack</td>
+              <td><span class="risk-pill critical">CRITICAL</span></td>
+            </tr>
+            <tr>
+              <td><code>src/signature.js</code></td>
+              <td>Digital Signature</td>
+              <td>ECDSA (secp256k1) + SHA-256</td>
+              <td>Shor's — ECDLP</td>
+              <td><span class="risk-pill critical">CRITICAL</span></td>
+            </tr>
+            <tr>
+              <td><code>src/signature.js</code></td>
+              <td>Hash Function</td>
+              <td>SHA-256</td>
+              <td>Grover's — halves effective bits</td>
+              <td><span class="risk-pill medium">MEDIUM</span></td>
+            </tr>
+            <tr>
+              <td><code>src/signature.js</code></td>
+              <td>Key Generation</td>
+              <td>RSA-2048</td>
+              <td>Shor's — integer factoring</td>
+              <td><span class="risk-pill critical">CRITICAL</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Migration Roadmap -->
+    <section class="section" id="roadmap">
+      <div class="section-header">
+        <h2>NIST PQC <span class="gradient-text">Migration Roadmap</span></h2>
+        <p>Recommended post-quantum replacements aligned with FIPS 203 / 204 standards.</p>
+      </div>
+
+      <div class="migration-grid">
+        <div class="migration-card">
+          <div class="migration-icon">🔑</div>
+          <h3>Digital Signatures</h3>
+          <div class="migration-arrow">
+            <div class="migration-from">RSA-2048 / ECDSA</div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="migration-to">ML-DSA (Dilithium)</div>
+          </div>
+          <div class="migration-standard">FIPS 204</div>
+          <p>Lattice-based digital signature scheme. Drop-in replacement for RSA and ECDSA signing operations.</p>
+        </div>
+
+        <div class="migration-card">
+          <div class="migration-icon">🔄</div>
+          <h3>Key Exchange</h3>
+          <div class="migration-arrow">
+            <div class="migration-from">ECDH (P-256)</div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="migration-to">ML-KEM (Kyber)</div>
+          </div>
+          <div class="migration-standard">FIPS 203</div>
+          <p>Lattice-based key encapsulation mechanism. Replaces ECDH for secure key agreement.</p>
+        </div>
+
+        <div class="migration-card">
+          <div class="migration-icon">🛡️</div>
+          <h3>SaaS / Okta SSO</h3>
+          <div class="migration-arrow">
+            <div class="migration-from">RS256 / ES256 JWKS</div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="migration-to">Hybrid RSA + ML-DSA</div>
+          </div>
+          <div class="migration-standard">Pending IdP Support</div>
+          <p>Adopt hybrid signatures during transition. Monitor Okta's PQC roadmap for SDK updates.</p>
+        </div>
+
+        <div class="migration-card">
+          <div class="migration-icon">🔒</div>
+          <h3>Symmetric & Hashing</h3>
+          <div class="migration-arrow">
+            <div class="migration-from">AES-256 / SHA-256</div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="migration-to">AES-256 / SHA-384+</div>
+          </div>
+          <div class="migration-standard">Already Sufficient</div>
+          <p>AES-256 retains 128-bit quantum security. Upgrade hashing to SHA-384/512 for additional margin.</p>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+        <div class="timeline-phase phase-active">
+          <div class="timeline-marker"></div>
+          <h4>Phase 1 — Hybrid Mode</h4>
+          <span class="timeline-date">Now → 2027</span>
+          <p>Deploy hybrid signatures (RSA + ML-DSA) and hybrid key exchange (ECDH + ML-KEM) for backward compatibility with quantum resistance.</p>
+        </div>
+        <div class="timeline-connector"></div>
+        <div class="timeline-phase">
+          <div class="timeline-marker"></div>
+          <h4>Phase 2 — PQC-Only</h4>
+          <span class="timeline-date">2027 → 2030</span>
+          <p>Deprecate classical algorithms. Transition all signing to ML-DSA and all key exchange to ML-KEM as ecosystem support matures.</p>
+        </div>
+        <div class="timeline-connector"></div>
+        <div class="timeline-phase">
+          <div class="timeline-marker"></div>
+          <h4>Phase 3 — Full Compliance</h4>
+          <span class="timeline-date">2030+</span>
+          <p>Complete migration to NIST PQC standards. Remove all classical crypto dependencies. Achieve full quantum readiness certification.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>CipherLens — Post-Quantum Cryptography Readiness Assessment PoC</p>
+      <p class="footer-links">
+        <a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank" rel="noopener">NIST PQC</a>
+        <span>·</span>
+        <a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank" rel="noopener">FIPS 203 (ML-KEM)</a>
+        <span>·</span>
+        <a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener">FIPS 204 (ML-DSA)</a>
+      </p>
+      <p class="footer-credit">This project was developed by Pralaphat Wattanachai for educational purposes.</p>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "cipherlens-demo-app",
+  "version": "1.0.0",
+  "description": "Post-Quantum Cryptography Scan PoC – Demonstrates classical cryptographic algorithms for Quantum Readiness Assessment",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
+  },
+  "keywords": [
+    "pqc",
+    "post-quantum",
+    "cryptography",
+    "security",
+    "cbom"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "@okta/jwt-verifier": "^3.2.0"
+  }
+}
