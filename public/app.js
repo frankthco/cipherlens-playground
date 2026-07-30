@@ -62,6 +62,103 @@ function callOkta() {
   callEndpoint("/api/verify-okta", { accessToken }, "okta-result", "okta-loader");
 }
 
+/* --- Toast Notifications --- */
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  
+  container.appendChild(toast);
+  
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+
+  // Remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+/* --- Auth0 (Okta CIC) SSO Integration --- */
+let auth0Client = null;
+
+async function initOkta() {
+  try {
+    const res = await fetch("/api/config");
+    const config = await res.json();
+
+    const domain = new URL(config.issuer).hostname;
+
+    auth0Client = await auth0.createAuth0Client({
+      domain: domain,
+      clientId: config.clientId,
+      authorizationParams: {
+        redirect_uri: window.location.origin
+      }
+    });
+
+    // Handle login callback if returning from Auth0
+    if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
+      try {
+        await auth0Client.handleRedirectCallback();
+        window.history.replaceState({}, document.title, window.location.pathname);
+        showToast("Login Success", "success");
+      } catch (err) {
+        showToast("Login callback failed: " + err.message, "error");
+      }
+    }
+
+    // Check if user is authenticated
+    const isAuthenticated = await auth0Client.isAuthenticated();
+    if (isAuthenticated) {
+      document.getElementById('btn-okta-login').style.display = 'none';
+      document.getElementById('btn-okta-logout').style.display = 'inline-flex';
+      
+      const accessToken = await auth0Client.getTokenSilently();
+      if (accessToken) {
+        document.getElementById('okta-token').value = accessToken;
+        // Auto verify
+        callOkta();
+      }
+    }
+  } catch (err) {
+    console.error("Failed to initialize Auth0:", err);
+  }
+}
+
+async function loginWithOkta() {
+  if (!auth0Client) return;
+  document.getElementById('okta-login-loader').classList.add('active');
+  try {
+    await auth0Client.loginWithRedirect();
+  } catch (err) {
+    showToast("Redirect failed: " + err.message, "error");
+    document.getElementById('okta-login-loader').classList.remove('active');
+  }
+}
+
+async function logoutOkta() {
+  if (!auth0Client) return;
+  try {
+    await auth0Client.logout({ 
+      logoutParams: {
+        returnTo: window.location.origin 
+      }
+    });
+  } catch (err) {
+    showToast("Logout failed: " + err.message, "error");
+  }
+}
+
+// Initialize Auth0 on page load
+window.addEventListener('load', initOkta);
+
 /* --- Smooth scroll for nav links --- */
 document.querySelectorAll('.nav-link').forEach(link => {
   link.addEventListener('click', (e) => {

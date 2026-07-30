@@ -11,6 +11,7 @@
  *   POST /api/sign         → ECDSA (secp256k1) signature + SHA-256 hash
  */
 
+require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const { hashPassword, verifyPassword, signJwt, verifyJwt, RSA_PUBLIC_KEY } = require("./auth");
@@ -243,6 +244,21 @@ app.post("/api/sign", (req, res) => {
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/config
+// ---------------------------------------------------------------------------
+
+/**
+ * Provides Okta configuration to the frontend so it can initialize the
+ * Okta Auth JS SDK.
+ */
+app.get("/api/config", (_req, res) => {
+  res.json({
+    issuer: process.env.OKTA_ISSUER || "https://cypherlens.cic-demo-platform.auth0app.com/",
+    clientId: process.env.OKTA_CLIENT_ID || "dnMHlbP6stYdRDyrYtEvTtIXMhwIUelW",
+  });
 });
 
 // ---------------------------------------------------------------------------

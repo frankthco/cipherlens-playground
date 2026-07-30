@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
   <!-- Animated background particles -->
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="glow glow-1" aria-hidden="true"></div>
@@ -158,22 +161,42 @@
           <pre class="endpoint-result" id="sign-result"><span class="placeholder">Response will appear here…</span></pre>
         </div>
 
-        <!-- Okta -->
+        <!-- Auth0 SSO Login -->
+        <div class="endpoint-card" id="ep-auth0-login">
+          <div class="endpoint-header">
+            <span class="method-badge post" style="background: var(--accent); color: #fff;">SSO</span>
+            <code>Auth0 / Okta CIC Login</code>
+          </div>
+          <p class="endpoint-desc">Authenticate via OIDC PKCE flow to receive a JWT access token.</p>
+          <div class="endpoint-form">
+            <button class="btn btn-primary" id="btn-okta-login" onclick="loginWithOkta()" style="width: 100%; display: flex; justify-content: center;">
+              <span class="btn-loader" id="okta-login-loader"></span>
+              Login with Auth0 (SSO)
+            </button>
+            <button class="btn btn-ghost" id="btn-okta-logout" onclick="logoutOkta()" style="display: none; border-color: var(--risk-critical); color: var(--risk-critical); width: 100%; justify-content: center;">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- Token Verification -->
         <div class="endpoint-card" id="ep-okta">
           <div class="endpoint-header">
             <span class="method-badge post">POST</span>
             <code>/api/verify-okta</code>
           </div>
-          <p class="endpoint-desc">Okta SSO token verification via JWKS endpoint (RS256 / ES256)</p>
+          <p class="endpoint-desc">Token signature verification via JWKS endpoint (RS256 / ES256)</p>
           <div class="endpoint-tags">
             <span class="tag tag-critical">RS256/ES256 — CRITICAL</span>
           </div>
           <div class="endpoint-form">
-            <input type="text" id="okta-token" placeholder="Okta access token" value="eyJhbGciOiJSUzI1NiJ9...">
-            <button class="btn btn-primary btn-sm" onclick="callOkta()">
-              <span class="btn-loader" id="okta-loader"></span>
-              Execute
-            </button>
+            <div class="input-row">
+              <input type="text" id="okta-token" placeholder="Paste access token here..." value="">
+              <button class="btn btn-primary btn-sm" onclick="callOkta()">
+                <span class="btn-loader" id="okta-loader"></span>
+                Verify
+              </button>
+            </div>
           </div>
           <pre class="endpoint-result" id="okta-result"><span class="placeholder">Response will appear here…</span></pre>
         </div>
@@ -358,6 +381,7 @@
     </div>
   </footer>
 
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

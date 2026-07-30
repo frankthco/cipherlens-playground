@@ -44,13 +44,25 @@ npm run dev
 
 The server starts on `http://localhost:3000`.
 
-### Environment Variables (Optional)
+### 🔐 Auth0 (Okta CIC) Setup (For Real SSO Demo)
 
-| Variable         | Default                                              | Description                  |
+To test the end-to-end SSO flow, you can connect this app to a free Auth0 (Okta CIC) Developer account:
+
+1. Sign up at [auth0.com](https://auth0.com/)
+2. In the Auth0 Dashboard, go to **Applications** → **Create Application**
+3. Select **Single Page Web Applications**
+4. Set the **Allowed Callback URLs**, **Allowed Logout URLs**, and **Allowed Web Origins** to `http://localhost:3000` (or your deployed Azure URL)
+5. Copy your `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+| Variable         | Example Value                                        | Description                  |
 | :--------------- | :--------------------------------------------------- | :--------------------------- |
-| `PORT`           | `3000`                                               | HTTP listen port             |
-| `OKTA_ISSUER`    | `https://dev-example.okta.com/oauth2/default`        | Okta authorization server    |
-| `OKTA_CLIENT_ID` | `0oa1bcdef2ghijklmn3o`                               | Okta client ID               |
+| `OKTA_ISSUER`    | `https://cypherlens.cic-demo-platform.auth0app.com/` | Your Auth0 domain URL          |
+| `OKTA_CLIENT_ID` | `dnMH...`                                            | Your Auth0 SPA Client ID       |
+| `PORT`           | `3000`                                               | HTTP listen port (Optional)    |
 
 ---
 
