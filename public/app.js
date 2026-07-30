@@ -99,7 +99,10 @@ async function initOkta() {
       domain: domain,
       clientId: config.clientId,
       authorizationParams: {
-        redirect_uri: window.location.origin
+        redirect_uri: window.location.origin,
+        // Specifying an audience forces Auth0 to return a proper JWT Access Token (JWS)
+        // instead of an opaque or encrypted JWE token.
+        audience: `https://${domain}/api/v2/`
       }
     });
 
@@ -120,9 +123,9 @@ async function initOkta() {
       document.getElementById('btn-okta-login').style.display = 'none';
       document.getElementById('btn-okta-logout').style.display = 'inline-flex';
       
-      const idTokenClaims = await auth0Client.getIdTokenClaims();
-      if (idTokenClaims && idTokenClaims.__raw) {
-        document.getElementById('okta-token').value = idTokenClaims.__raw;
+      const accessToken = await auth0Client.getTokenSilently();
+      if (accessToken) {
+        document.getElementById('okta-token').value = accessToken;
         // Auto verify
         callOkta();
       }
