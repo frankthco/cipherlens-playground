@@ -120,9 +120,9 @@ async function initOkta() {
       document.getElementById('btn-okta-login').style.display = 'none';
       document.getElementById('btn-okta-logout').style.display = 'inline-flex';
       
-      const accessToken = await auth0Client.getTokenSilently();
-      if (accessToken) {
-        document.getElementById('okta-token').value = accessToken;
+      const idTokenClaims = await auth0Client.getIdTokenClaims();
+      if (idTokenClaims && idTokenClaims.__raw) {
+        document.getElementById('okta-token').value = idTokenClaims.__raw;
         // Auto verify
         callOkta();
       }
